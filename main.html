@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Regular Expression Text Display</title>
+    <style>
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+      }
+      .input-container {
+        grid-column: 1 / span 1;
+      }
+      .result-container {
+        grid-column: 2 / span 1;
+      }
+      .line {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .input-text {
+        flex: 1;
+        padding-right: 10px;
+        border-right: 1px solid #ccc;
+      }
+      .result-text {
+        flex: 2;
+        padding-left: 10px;
+      }
+    </style>
+    <script>
+      function applyRegex() {
+        var inputText = document.getElementById("textInput").value;
+        var inputText2 = document.getElementById("textInput2").value;
+
+        inputText = inputText.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
+        inputText += " <br>"; // Append text at the end of the inputText
+
+        var regexPattern = /(\S+?)\[(.+?)\](.*?)[\s\n\r$]/g; // Regex pattern for the specified substitution
+        var result = inputText.replace(
+          regexPattern,
+          "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
+        ); // Replace matches with the specified format
+
+        var lines = inputText2.split(/\r?\n/); // Split text from second input box into lines
+        var resultLines = result.split("<br>"); // Split result into lines
+
+        var alignedResult = ""; // String to store aligned result
+
+        // Loop through each line from the second input box and its corresponding line from the result
+        for (var i = 0; i < lines.length; i++) {
+          alignedResult +=
+            '<div class="line"><div class="input-text">' +
+            lines[i] +
+            '</div><div class="result-text">' +
+            resultLines[i] +
+            "</div></div>";
+        }
+
+        document.getElementById("alignedDisplay").innerHTML = alignedResult; // Display aligned result
+
+        // Display raw substitution result
+        document.getElementById("rawResult").textContent = result;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="input-container">
+        <label for="textInput">Japanese</label><br />
+        <textarea id="textInput" rows="4" cols="50"></textarea>
+      </div>
+      <div class="result-container">
+        <label for="textInput2">Translation</label><br />
+        <textarea id="textInput2" rows="4" cols="50"></textarea>
+      </div>
+    </div>
+    <button onclick="applyRegex()">Apply Regex</button><br />
+    <label for="alignedDisplay">Aligned Result:</label><br />
+    <div id="alignedDisplay"></div>
+    <label for="rawResult">Raw Substitution Result:</label><br />
+    <div id="rawResult"></div>
+  </body>
+</html>
