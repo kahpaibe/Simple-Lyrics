@@ -1,4 +1,4 @@
-function applyRegex() {
+function applyRuby() {
   var inputJapanese = document.getElementById("japaneseInput").value;
   var inputEnglish = document.getElementById("englishInput").value;
   var inputTitle = document.getElementById("titleInput").value;
@@ -66,6 +66,8 @@ function applyRegex() {
     document.getElementById("h1FontSize").value + "px";
   document.querySelector("h2").style.fontSize =
     document.getElementById("h2FontSize").value + "px";
+
+  titleNoRuby(); // change window title
 }
 function makePrintTab() {
   var title = document.getElementById("Title").innerHTML;
@@ -88,9 +90,11 @@ function makePrintTab() {
   printWindow.document.write("<div>" + alignedContent + "</div>");
 
   printWindow.document.write("</body></html>");
+
+  // printWindow.document.title = titleNoRuby(); // change window title // Does not work as it is
 }
 function callPrintTab() {
-  applyRegex();
+  applyRuby();
   makePrintTab();
 }
 function saveToJson() {
@@ -144,4 +148,24 @@ function importFromJson() {
   };
 
   input.click();
+}
+
+function titleNoRuby() {
+  // to trim the title
+  var inputTitle = document.getElementById("titleInput").value;
+  var inputSubtitle = document.getElementById("subtitleInput").value;
+  inputTitle = inputTitle.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
+  inputTitle += " "; // Append text at the end of the inputText
+
+  var regexPattern = /(\S+?)\[(.+?)\](.*?)[\s\n\r$]/g; // Regex pattern for the specified substitution
+
+  var titleNoruby = inputTitle.replace(
+    regexPattern,
+    // "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
+    "$1 $3"
+  ); // Replace matches with the specified format
+
+  // Set titles
+  document.title = titleNoruby + " - " + inputSubtitle;
+  return titleNoruby + " - " + inputSubtitle;
 }
