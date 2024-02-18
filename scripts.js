@@ -1,6 +1,6 @@
 function applyRegex() {
   var inputJapanese = document.getElementById("japaneseInput").value;
-  var inputText2 = document.getElementById("englishInput").value;
+  var inputEnglish = document.getElementById("englishInput").value;
   var inputTitle = document.getElementById("titleInput").value;
   var inputSubtitle = document.getElementById("subtitleInput").value;
 
@@ -19,25 +19,39 @@ function applyRegex() {
     "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
   ); // Replace matches with the specified format
 
-  var lines = inputText2.split(/\r?\n/); // Split text from second input box into lines
+  var lines = inputEnglish.split(/\r?\n/); // Split text from second input box into lines
   var rubyresultLines = rubyresult.split("<br>"); // Split result into lines
 
   var alignedResult = ""; // String to store aligned result
 
   // Loop through each line from the second input box and its corresponding line from the result
-  for (var i = 0; i < lines.length; i++) {
-    alignedResult +=
-      '<div class="line"><div class="japanese-text" style="font-size: ' +
-      document.getElementById("japaneseFontSize").value +
-      'px;">' +
-      rubyresultLines[i] +
-      '</div><div class="english-text" style="font-size: ' +
-      document.getElementById("englishFontSize").value +
-      'px;">' +
-      lines[i] +
-      "</div></div>";
+  for (var i = 0; i < rubyresultLines.length; i++) {
+    if (rubyresultLines[i].trim() === "") {
+      // Append a placeholder element for empty lines
+      alignedResult +=
+        '<div class="line"><div class="japanese-text" style="font-size: ' +
+        document.getElementById("japaneseFontSize").value +
+        'px;">' +
+        " " +
+        '</div><div class="english-text" style="font-size: ' +
+        document.getElementById("englishFontSize").value +
+        'px;">' +
+        "&nbsp;" + // non separating space
+        "</div></div>";
+    } else {
+      // Append the line content as usual
+      alignedResult +=
+        '<div class="line"><div class="japanese-text" style="font-size: ' +
+        document.getElementById("japaneseFontSize").value +
+        'px;">' +
+        rubyresultLines[i] +
+        '</div><div class="english-text" style="font-size: ' +
+        document.getElementById("englishFontSize").value +
+        'px;">' +
+        lines[i] +
+        "</div></div>";
+    }
   }
-
   document.getElementById("alignedDisplay").innerHTML = alignedResult; // Display aligned result
 
   // Display raw substitution result
