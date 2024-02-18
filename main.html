@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Regular Expression Lyrics Display</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <!-- <style>
+    <style>
       .slider-container {
         margin-bottom: 20px;
       }
@@ -20,11 +20,11 @@
       .slider {
         width: 200px;
       }
-    </style> -->
+    </style>
     <script>
       function applyRegex() {
-        var inputJapanese = document.getElementById("textInput").value;
-        var inputEnglish = document.getElementById("textInput2").value;
+        var inputJapanese = document.getElementById("japaneseInput").value;
+        var inputText2 = document.getElementById("englishInput").value;
         var inputTitle = document.getElementById("titleInput").value;
         var inputSubtitle = document.getElementById("subtitleInput").value;
 
@@ -43,7 +43,7 @@
           "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
         ); // Replace matches with the specified format
 
-        var lines = inputEnglish.split(/\r?\n/); // Split text from second input box into lines
+        var lines = inputText2.split(/\r?\n/); // Split text from second input box into lines
         var rubyresultLines = rubyresult.split("<br>"); // Split result into lines
 
         var alignedResult = ""; // String to store aligned result
@@ -53,15 +53,11 @@
           alignedResult +=
             '<div class="line"><div class="japanese-text" style="font-size: ' +
             document.getElementById("japaneseFontSize").value +
-            "px; width: " +
-            document.getElementById("columnWidth").value +
-            '%;">' +
+            'px;">' +
             rubyresultLines[i] +
             '</div><div class="english-text" style="font-size: ' +
             document.getElementById("englishFontSize").value +
-            "px; width: " +
-            document.getElementById("columnWidth").value +
-            '%;">' +
+            'px;">' +
             lines[i] +
             "</div></div>";
         }
@@ -137,20 +133,6 @@
         onchange="applyRegex()"
       />
     </div>
-
-    <!-- <div class="slider-container">
-      <label class="slider-label" for="columnWidth">Column Width:</label>
-      <input
-        class="slider"
-        type="range"
-        id="columnWidth"
-        min="10"
-        max="100"
-        value="50"
-        onchange="applyRegex()"
-      />
-    </div> -->
-
     <div class="container">
       <div class="title-container">
         <label for="titleInput">Title</label><br />
@@ -163,12 +145,12 @@
     </div>
     <div class="container">
       <div class="japanese-container">
-        <label for="textInput">Japanese</label><br />
-        <textarea id="textInput" rows="12" cols="50"></textarea>
+        <label for="japaneseInput">Japanese</label><br />
+        <textarea id="japaneseInput" rows="12" cols="50"></textarea>
       </div>
       <div class="english-container">
-        <label for="textInput2">Translation</label><br />
-        <textarea id="textInput2" rows="12" cols="50"></textarea>
+        <label for="englishInput">Translation</label><br />
+        <textarea id="englishInput" rows="12" cols="50"></textarea>
       </div>
     </div>
     <button onclick="applyRegex()">Apply Regex</button><br />
