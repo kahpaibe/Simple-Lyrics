@@ -1,17 +1,32 @@
 <!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="styles.css" />
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Regular Expression Lyrics Display</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <style>
+      .slider-container {
+        margin-bottom: 20px;
+      }
+
+      .slider-label {
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+        margin-right: 10px;
+      }
+
+      .slider {
+        width: 200px;
+      }
+    </style>
     <script>
       function applyRegex() {
         var inputJapanese = document.getElementById("textInput").value;
-        var inputText2 = document.getElementById("textInput2").value;
+        var inputEnglish = document.getElementById("textInput2").value;
         var inputTitle = document.getElementById("titleInput").value;
-        var title2 = document.getElementById("subtitleInput").value;
+        var inputSubtitle = document.getElementById("subtitleInput").value;
 
         inputJapanese = inputJapanese.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
         inputJapanese += " <br>"; // Append text at the end of the inputText
@@ -28,7 +43,7 @@
           "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
         ); // Replace matches with the specified format
 
-        var lines = inputText2.split(/\r?\n/); // Split text from second input box into lines
+        var lines = inputEnglish.split(/\r?\n/); // Split text from second input box into lines
         var rubyresultLines = rubyresult.split("<br>"); // Split result into lines
 
         var alignedResult = ""; // String to store aligned result
@@ -36,9 +51,17 @@
         // Loop through each line from the second input box and its corresponding line from the result
         for (var i = 0; i < lines.length; i++) {
           alignedResult +=
-            '<div class="line"><div class="japanese-text">' +
+            '<div class="line"><div class="japanese-text" style="font-size: ' +
+            document.getElementById("japaneseFontSize").value +
+            "px; width: " +
+            document.getElementById("columnWidth").value +
+            '%;">' +
             rubyresultLines[i] +
-            '</div><div class="english-text">' +
+            '</div><div class="english-text" style="font-size: ' +
+            document.getElementById("englishFontSize").value +
+            "px; width: " +
+            document.getElementById("columnWidth").value +
+            '%;">' +
             lines[i] +
             "</div></div>";
         }
@@ -50,11 +73,83 @@
 
         // Set titles
         document.getElementById("Title").innerHTML = titleruby;
-        document.getElementById("subTitle").textContent = title2;
+        document.getElementById("subTitle").textContent = inputSubtitle;
+
+        // Set font sizes for h1 and h2
+        document.querySelector("h1").style.fontSize =
+          document.getElementById("h1FontSize").value + "px";
+        document.querySelector("h2").style.fontSize =
+          document.getElementById("h2FontSize").value + "px";
       }
     </script>
   </head>
   <body>
+    <div class="slider-container">
+      <label class="slider-label" for="japaneseFontSize"
+        >Japanese Font Size:</label
+      >
+      <input
+        class="slider"
+        type="range"
+        id="japaneseFontSize"
+        min="10"
+        max="50"
+        value="16"
+        onchange="applyRegex()"
+      />
+    </div>
+    <div class="slider-container">
+      <label class="slider-label" for="englishFontSize"
+        >English Font Size:</label
+      >
+      <input
+        class="slider"
+        type="range"
+        id="englishFontSize"
+        min="10"
+        max="50"
+        value="16"
+        onchange="applyRegex()"
+      />
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="h1FontSize">Title Font Size:</label>
+      <input
+        class="slider"
+        type="range"
+        id="h1FontSize"
+        min="10"
+        max="50"
+        value="24"
+        onchange="applyRegex()"
+      />
+    </div>
+    <div class="slider-container">
+      <label class="slider-label" for="h2FontSize">Subtitle Font Size:</label>
+      <input
+        class="slider"
+        type="range"
+        id="h2FontSize"
+        min="10"
+        max="50"
+        value="20"
+        onchange="applyRegex()"
+      />
+    </div>
+
+    <div class="slider-container">
+      <label class="slider-label" for="columnWidth">Column Width:</label>
+      <input
+        class="slider"
+        type="range"
+        id="columnWidth"
+        min="10"
+        max="100"
+        value="50"
+        onchange="applyRegex()"
+      />
+    </div>
     <div class="container">
       <div class="title-container">
         <label for="titleInput">Title</label><br />
