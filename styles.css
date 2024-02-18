@@ -33,6 +33,7 @@ h2 {
 .english-text {
   flex: 2;
   padding-left: 10px;
+  flex-grow: 1;
 }
 textarea {
   width: 100%;
