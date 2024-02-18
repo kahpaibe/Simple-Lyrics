@@ -5,22 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Regular Expression Lyrics Display</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <style>
-      .slider-container {
-        margin-bottom: 20px;
-      }
-
-      .slider-label {
-        display: inline-block;
-        width: 100px;
-        text-align: right;
-        margin-right: 10px;
-      }
-
-      .slider {
-        width: 200px;
-      }
-    </style>
     <script>
       function applyRegex() {
         var inputJapanese = document.getElementById("japaneseInput").value;
@@ -77,9 +61,37 @@
         document.querySelector("h2").style.fontSize =
           document.getElementById("h2FontSize").value + "px";
       }
+      function makePrintTab() {
+        var title = document.getElementById("Title").innerHTML;
+        var subtitle = document.getElementById("subTitle").textContent;
+        var alignedContent =
+          document.getElementById("alignedDisplay").innerHTML;
+
+        var printWindow = window.open("", "_blank");
+
+        // import css styles
+        printWindow.document.write(
+          '<link rel="stylesheet" type="text/css" href="styles.css" />'
+        );
+
+        printWindow.document.write(
+          "<html><head><title>Printed Content</title></head><body>"
+        );
+
+        printWindow.document.write("<h1>" + title + "</h1>");
+        printWindow.document.write("<h2>" + subtitle + "</h2>");
+        printWindow.document.write("<div>" + alignedContent + "</div>");
+
+        printWindow.document.write("</body></html>");
+      }
+      function callPrintTab() {
+        applyRegex();
+        makePrintTab();
+      }
     </script>
   </head>
   <body>
+    <button class="print-button" onclick="callPrintTab()">Print Content</button>
     <div class="slider-container">
       <label class="slider-label" for="japaneseFontSize"
         >Japanese Font Size:</label
@@ -163,3 +175,10 @@
     <div id="rawResult"></div>
   </body>
 </html>
+
+<!-- Adding printing functionnality -->
+<style>
+  .print-button {
+    margin-top: 20px;
+  }
+</style>
