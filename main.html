@@ -12,58 +12,57 @@
     <button onclick="saveToJson()">Save to JSON</button>
     <button onclick="importFromJson()">Import from JSON</button>
     <div class="slider-container">
-      <label class="slider-label" for="japaneseFontSize"
-        >Japanese Font Size:</label
-      >
-      <input
-        class="slider"
-        type="range"
-        id="japaneseFontSize"
-        min="10"
-        max="50"
-        value="16"
-        onchange="applyRuby()"
-      />
-    </div>
-    <div class="slider-container">
-      <label class="slider-label" for="englishFontSize"
-        >English Font Size:</label
-      >
-      <input
-        class="slider"
-        type="range"
-        id="englishFontSize"
-        min="10"
-        max="50"
-        value="16"
-        onchange="applyRuby()"
-      />
-    </div>
-
-    <div class="slider-container">
-      <label class="slider-label" for="h1FontSize">Title Font Size:</label>
-      <input
-        class="slider"
-        type="range"
-        id="h1FontSize"
-        min="10"
-        max="50"
-        value="24"
-        onchange="applyRuby()"
-      />
-    </div>
-    <div class="slider-container">
-      <label class="slider-label" for="h2FontSize">Subtitle Font Size:</label>
-      <input
-        class="slider"
-        type="range"
-        id="h2FontSize"
-        min="10"
-        max="50"
-        value="20"
-        onchange="applyRuby()"
-      />
-    </div>
+      <div class="slider-container">
+        <label class="slider-label" id="japaneseFontSizeLabel" for="japaneseFontSize">Japanese Font Size:</label>
+        <input
+          class="slider"
+          type="range"
+          id="japaneseFontSize"
+          min="10"
+          max="50"
+          value="16"
+          onchange="updateSliderLabel('japaneseFontSize', 'japaneseFontSizeLabel')"
+        />
+      </div>
+      <div class="slider-container">
+        <label class="slider-label" id="englishFontSizeLabel" for="englishFontSize">English Font Size:</label>
+        <input
+          class="slider"
+          type="range"
+          id="englishFontSize"
+          min="10"
+          max="50"
+          value="16"
+          onchange="updateSliderLabel('englishFontSize', 'englishFontSizeLabel')"
+        />
+      </div>
+      
+      <div class="slider-container">
+        <label class="slider-label" id="h1FontSizeLabel" for="h1FontSize">Title Font Size:</label>
+        <input
+          class="slider"
+          type="range"
+          id="h1FontSize"
+          min="10"
+          max="100"
+          value="24"
+          onchange="updateSliderLabel('h1FontSize', 'h1FontSizeLabel')"
+        />
+      </div>
+      
+      <div class="slider-container">
+        <label class="slider-label" id="h2FontSizeLabel" for="h2FontSize">Subtitle Font Size:</label>
+        <input
+          class="slider"
+          type="range"
+          id="h2FontSize"
+          min="10"
+          max="100"
+          value="20"
+          onchange="updateSliderLabel('h2FontSize', 'h2FontSizeLabel')"
+        />
+      </div>
+      
     <div class="container">
       <div class="title-container">
         <label for="titleInput">Title</label><br />

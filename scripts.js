@@ -58,12 +58,20 @@ function applyRuby() {
   document.getElementById("rawResult").textContent = rubyresult;
 
   // Set titles
-  document.getElementById("Title").innerHTML = titleruby;
-  document.getElementById("subTitle").textContent = inputSubtitle;
+  document.getElementById("Title").innerHTML =
+    '<h1><div id="Title" style="font-size: ' +
+    document.getElementById("h1FontSize").value +
+    'px">' +
+    titleruby +
+    "</div></h1>";
+  document.getElementById("subTitle").innerHTML =
+    '<h2><div id="Title" style="font-size: ' +
+    document.getElementById("h2FontSize").value +
+    'px">' +
+    inputSubtitle +
+    "</div></h2>";
 
   // Set font sizes for h1 and h2
-  document.querySelector("h1").style.fontSize =
-    document.getElementById("h1FontSize").value + "px";
   document.querySelector("h2").style.fontSize =
     document.getElementById("h2FontSize").value + "px";
 
@@ -168,4 +176,12 @@ function titleNoRuby() {
   // Set titles
   document.title = titleNoruby + " - " + inputSubtitle;
   return titleNoruby + " - " + inputSubtitle;
+}
+
+function updateSliderLabel(sliderId, labelId) {
+  var slider = document.getElementById(sliderId);
+  var label = document.getElementById(labelId);
+  label.textContent = label.textContent.split(":")[0] + ": " + slider.value;
+
+  applyRegex(); // update all
 }
