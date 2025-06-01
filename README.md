@@ -1,12 +1,14 @@
-# Simple Ruby
+# SimpleRuby
 
 A very simple page to generate text with ruby (on top text).
 An example usage would be for displaying Japanese lyrics (with furigana) alongside its english translation.
-![image](https://github.com/kahpaibe/Simple-Lyrics/assets/85435720/777fa552-d903-465b-8d86-379590585010)
+![image](https://github.com/user-attachments/assets/92e743ed-ddc2-4bda-8912-a22c4b1497d2)
+
 
 ## Usage
 
-Simply open index.html in any web browser.
+Simply open index.html in any web browser. Settings and fields can be saved to or loaded from json files.
+A button to open a clean page (with relevant text only) can be used to print the content to pdf.
 
 ## Version history
 
