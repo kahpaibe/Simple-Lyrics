@@ -1,187 +1,333 @@
-function applyRuby() {
-  var inputJapanese = document.getElementById("japaneseInput").value;
-  var inputEnglish = document.getElementById("englishInput").value;
-  var inputTitle = document.getElementById("titleInput").value;
-  var inputSubtitle = document.getElementById("subtitleInput").value;
+document.addEventListener('DOMContentLoaded', function() {
+    const columnSlider = document.getElementById('columnSlider');
+    const columnValue = document.getElementById('columnValue');
+    const rowSpacingSlider = document.getElementById('rowSpacingSlider');
+    const rowSpacingValue = document.getElementById('rowSpacingValue');
+    const titleFontSizeSlider = document.getElementById('titleFontSizeSlider');
+    const titleFontSizeValue = document.getElementById('titleFontSizeValue');
+    const subtitleFontSizeSlider = document.getElementById('subtitleFontSizeSlider');
+    const subtitleFontSizeValue = document.getElementById('subtitleFontSizeValue');
+    const fontSizeSlidersContainer = document.getElementById('fontSizeSlidersContainer');
+    const textBoxesContainer = document.getElementById('textBoxesContainer');
+    const lyricsContainer = document.getElementById('lyricsContainer');
+    const titleTextBox = document.getElementById('titleTextBox');
+    const subtitleTextBox = document.getElementById('subtitleTextBox');
+    const titleContainer = document.getElementById('titleContainer');
+    const subtitleContainer = document.getElementById('subtitleContainer');
+    const saveButton = document.getElementById('saveButton');
+    const loadButton = document.getElementById('loadButton');
 
-  inputJapanese = inputJapanese.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
-  inputJapanese += " <br>"; // Append text at the end of the inputText
-  inputTitle = inputTitle.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
-  inputTitle += " "; // Append text at the end of the inputText
+    let fontSizeSliders = [];
 
-  var regexPattern = /(\S+?)\[(.+?)\](.*?)[\s\n\r$]/g; // Regex pattern for the specified substitution
-  var rubyresult = inputJapanese.replace(
-    regexPattern,
-    "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
-  ); // Replace matches with the specified format
-  var titleruby = inputTitle.replace(
-    regexPattern,
-    "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
-  ); // Replace matches with the specified format
+    columnSlider.addEventListener('input', function() {
+        const coln = parseInt(columnSlider.value);
+        columnValue.textContent = coln;
+        updateTextBoxes(coln);
+    });
 
-  var lines = inputEnglish.split(/\r?\n/); // Split text from second input box into lines
-  var rubyresultLines = rubyresult.split("<br>"); // Split result into lines
+    rowSpacingSlider.addEventListener('input', function() {
+        const rowSpacing = parseInt(rowSpacingSlider.value);
+        rowSpacingValue.textContent = rowSpacing;
+        updateLyricsBlocks();
+    });
 
-  var alignedResult = ""; // String to store aligned result
+    titleFontSizeSlider.addEventListener('input', function() {
+        const titleFontSize = parseInt(titleFontSizeSlider.value);
+        titleFontSizeValue.textContent = titleFontSize;
+        titleContainer.style.fontSize = `${titleFontSize}px`;
+    });
 
-  // Loop through each line from the second input box and its corresponding line from the result
-  for (var i = 0; i < rubyresultLines.length; i++) {
-    if (rubyresultLines[i].trim() === "") {
-      // Append a placeholder element for empty lines
-      alignedResult +=
-        '<div class="line"><div class="japanese-text" style="font-size: ' +
-        document.getElementById("japaneseFontSize").value +
-        'px;">' +
-        " " +
-        '</div><div class="english-text" style="font-size: ' +
-        document.getElementById("englishFontSize").value +
-        'px;">' +
-        "&nbsp;" + // non separating space
-        "</div></div>";
-    } else {
-      // Append the line content as usual
-      alignedResult +=
-        '<div class="line"><div class="japanese-text" style="font-size: ' +
-        document.getElementById("japaneseFontSize").value +
-        'px;">' +
-        rubyresultLines[i] +
-        '</div><div class="english-text" style="font-size: ' +
-        document.getElementById("englishFontSize").value +
-        'px;">' +
-        lines[i] +
-        "</div></div>";
+    subtitleFontSizeSlider.addEventListener('input', function() {
+        const subtitleFontSize = parseInt(subtitleFontSizeSlider.value);
+        subtitleFontSizeValue.textContent = subtitleFontSize;
+        subtitleContainer.style.fontSize = `${subtitleFontSize}px`;
+    });
+
+    titleTextBox.addEventListener('input', updateTitle);
+    subtitleTextBox.addEventListener('input', updateSubtitle);
+
+    saveButton.addEventListener('click', saveData);
+    loadButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    function updateTitle() {
+        const titleContent = titleTextBox.value;
+        const withRt = titleContent.replace(/([^\s]+?)\[(.+?)\]/g, '<ruby><rb>$1</rb><rt>$2</rt></ruby>');
+        titleContainer.innerHTML = withRt;
     }
-  }
-  document.getElementById("alignedDisplay").innerHTML = alignedResult; // Display aligned result
 
-  // Display raw substitution result
-  document.getElementById("rawResult").textContent = rubyresult;
+    function updateSubtitle() {
+        const subtitleContent = subtitleTextBox.value;
+        const withRt = subtitleContent.replace(/([^\s]+?)\[(.+?)\]/g, '<ruby><rb>$1</rb><rt>$2</rt></ruby>');
+        subtitleContainer.innerHTML = withRt;
+    }
 
-  // Set titles
-  document.getElementById("Title").innerHTML =
-    '<h1><div id="Title" style="font-size: ' +
-    document.getElementById("h1FontSize").value +
-    'px">' +
-    titleruby +
-    "</div></h1>";
-  document.getElementById("subTitle").innerHTML =
-    '<h2><div id="Title" style="font-size: ' +
-    document.getElementById("h2FontSize").value +
-    'px">' +
-    inputSubtitle +
-    "</div></h2>";
+    function updateTextBoxes(coln) {
+        textBoxesContainer.innerHTML = '';
+        fontSizeSlidersContainer.innerHTML = '';
+        lyricsContainer.querySelectorAll('.lyrics-row').forEach(el => el.remove());
+        fontSizeSliders = [];
 
-  // Set font sizes for h1 and h2
-  document.querySelector("h2").style.fontSize =
-    document.getElementById("h2FontSize").value + "px";
+        const containerWidth = textBoxesContainer.clientWidth;
+        const itemWidth = containerWidth / coln;
+        const textBoxHeight = window.innerHeight / 3;
 
-  titleNoRuby(); // change window title
-}
-function makePrintTab() {
-  var title = document.getElementById("Title").innerHTML;
-  var subtitle = document.getElementById("subTitle").textContent;
-  var alignedContent = document.getElementById("alignedDisplay").innerHTML;
+        for (let i = 0; i < coln; i++) {
+            const fontSizeSliderContainer = document.createElement('div');
+            fontSizeSliderContainer.className = 'font-size-slider-container';
+            fontSizeSliderContainer.style.width = `${itemWidth}px`;
 
-  var printWindow = window.open("", "_blank");
+            const fontSizeSliderLabel = document.createElement('label');
+            fontSizeSliderLabel.textContent = `Font Size (${i + 1}):`;
+            const fontSizeSlider = document.createElement('input');
+            fontSizeSlider.type = 'range';
+            fontSizeSlider.min = '8';
+            fontSizeSlider.max = '32';
+            fontSizeSlider.value = '16';
+            const fontSizeValue = document.createElement('span');
+            fontSizeValue.textContent = fontSizeSlider.value;
 
-  // import css styles
-  printWindow.document.write(
-    '<link rel="stylesheet" type="text/css" href="styles.css" />'
-  );
+            fontSizeSlider.addEventListener('input', function() {
+                fontSizeValue.textContent = fontSizeSlider.value;
+                updateLyricsBlocks();
+            });
 
-  printWindow.document.write(
-    "<html><head><title>Printed Content</title></head><body>"
-  );
+            fontSizeSliderContainer.appendChild(fontSizeSliderLabel);
+            fontSizeSliderContainer.appendChild(fontSizeSlider);
+            fontSizeSliderContainer.appendChild(fontSizeValue);
+            fontSizeSlidersContainer.appendChild(fontSizeSliderContainer);
+            fontSizeSliders.push(fontSizeSlider);
 
-  printWindow.document.write("<h1>" + title + "</h1>");
-  printWindow.document.write("<h2>" + subtitle + "</h2>");
-  printWindow.document.write("<div>" + alignedContent + "</div>");
+            const textBox = document.createElement('textarea');
+            textBox.className = 'text-box';
+            textBox.placeholder = `Enter text for column ${i + 1}`;
+            textBox.style.width = `${itemWidth}px`;
+            textBox.style.height = `${textBoxHeight}px`;
+            textBox.addEventListener('input', updateLyricsBlocks);
+            textBoxesContainer.appendChild(textBox);
+        }
 
-  printWindow.document.write("</body></html>");
+        updateLyricsBlocks();
+    }
 
-  // printWindow.document.title = titleNoRuby(); // change window title // Does not work as it is
-}
-function callPrintTab() {
-  applyRuby();
-  makePrintTab();
-}
-function saveToJson() {
-  var title = document.getElementById("titleInput").value;
-  var jsonData = {
-    title: title,
-    subtitle: document.getElementById("subtitleInput").value,
-    japanese: document.getElementById("japaneseInput").value,
-    english: document.getElementById("englishInput").value,
-  };
-  var fileName = window.prompt("Enter a file name:", title + ".json"); // defaults to {title}.json
+    function updateLyricsBlocks() {
+        const textBoxes = document.querySelectorAll('.text-box');
+        const coln = textBoxes.length;
+        const containerWidth = lyricsContainer.clientWidth;
+        const blockWidth = containerWidth / coln;
+        const rowSpacing = parseInt(rowSpacingSlider.value);
 
-  if (!fileName) {
-    // User canceled or didn't provide a file name
-    return;
-  }
+        let maxLines = 0;
+        const linesArray = [];
 
-  var jsonDataString = JSON.stringify(jsonData);
+        textBoxes.forEach((textBox, index) => {
+            const lines = textBox.value.split('\n');
+            linesArray[index] = lines;
+            if (lines.length > maxLines) {
+                maxLines = lines.length;
+            }
+        });
 
-  var blob = new Blob([jsonDataString], { type: "application/json" });
-  var url = URL.createObjectURL(blob);
+        const existingRows = lyricsContainer.querySelectorAll('.lyrics-row');
+        existingRows.forEach(row => row.remove());
 
-  var a = document.createElement("a");
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-function importFromJson() {
-  var input = document.createElement("input");
-  input.type = "file";
-  input.accept = "application/json";
+        for (let lineIndex = 0; lineIndex < maxLines; lineIndex++) {
+            const rowContainer = document.createElement('div');
+            rowContainer.className = 'lyrics-row';
+            rowContainer.style.display = 'flex';
+            rowContainer.style.marginBottom = `${rowSpacing}px`;
 
-  input.onchange = function () {
-    var file = input.files[0];
-    var reader = new FileReader();
+            for (let colIndex = 0; colIndex < coln; colIndex++) {
+                const lyricsBlock = document.createElement('div');
+                lyricsBlock.className = 'lyrics-block';
+                lyricsBlock.style.width = `${blockWidth}px`;
+                lyricsBlock.style.fontSize = `${fontSizeSliders[colIndex].value}px`;
 
-    reader.onload = function () {
-      var jsonDataString = reader.result;
-      var jsonData = JSON.parse(jsonDataString);
+                let lineContent = linesArray[colIndex][lineIndex] || '';
+                const withRt = lineContent.replace(/([^\s]+?)\[(.+?)\]/g, '<ruby><rb>$1</rb><rt>$2</rt></ruby>');
 
-      document.getElementById("titleInput").value = jsonData.title;
-      document.getElementById("subtitleInput").value = jsonData.subtitle;
-      document.getElementById("japaneseInput").value = jsonData.japanese;
-      document.getElementById("englishInput").value = jsonData.english;
-    };
+                lyricsBlock.innerHTML = withRt;
+                rowContainer.appendChild(lyricsBlock);
+            }
 
-    reader.readAsText(file);
-  };
+            lyricsContainer.appendChild(rowContainer);
+        }
+    }
 
-  input.click();
-}
+    function saveData() {
+        const data = {
+            columnSlider: columnSlider.value,
+            rowSpacingSlider: rowSpacingSlider.value,
+            titleFontSizeSlider: titleFontSizeSlider.value,
+            subtitleFontSizeSlider: subtitleFontSizeSlider.value,
+            fontSizeSliders: Array.from(fontSizeSliders).map(slider => slider.value),
+            textBoxes: Array.from(document.querySelectorAll('.text-box')).map(textBox => textBox.value),
+            title: titleTextBox.value,
+            subtitle: subtitleTextBox.value
+        };
 
-function titleNoRuby() {
-  // to trim the title
-  var inputTitle = document.getElementById("titleInput").value;
-  var inputSubtitle = document.getElementById("subtitleInput").value;
-  inputTitle = inputTitle.replace(/(\r\n|\r|\n)/g, " <br> "); // Replace new lines with <br> tags
-  inputTitle += " "; // Append text at the end of the inputText
+        const jsonData = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
 
-  var regexPattern = /(\S+?)\[(.+?)\](.*?)[\s\n\r$]/g; // Regex pattern for the specified substitution
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'SimpleRubySettings.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
 
-  var titleNoruby = inputTitle.replace(
-    regexPattern,
-    // "<ruby><rb>$1</rb><rt>$2</rt></ruby>$3"
-    "$1 $3"
-  ); // Replace matches with the specified format
+    function loadData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-  // Set titles
-  document.title = titleNoruby + " - " + inputSubtitle;
-  return titleNoruby + " - " + inputSubtitle;
-}
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = JSON.parse(e.target.result);
 
-function updateSliderLabel(sliderId, labelId) {
-  var slider = document.getElementById(sliderId);
-  var label = document.getElementById(labelId);
-  label.textContent = label.textContent.split(":")[0] + ": " + slider.value;
+            columnSlider.value = data.columnSlider;
+            columnValue.textContent = data.columnSlider;
+            rowSpacingSlider.value = data.rowSpacingSlider;
+            rowSpacingValue.textContent = data.rowSpacingSlider;
+            titleFontSizeSlider.value = data.titleFontSizeSlider;
+            titleFontSizeValue.textContent = data.titleFontSizeSlider;
+            subtitleFontSizeSlider.value = data.subtitleFontSizeSlider;
+            subtitleFontSizeValue.textContent = data.subtitleFontSizeSlider;
 
-  applyRegex(); // update all
-}
+            updateTextBoxes(parseInt(columnSlider.value));
+
+            data.fontSizeSliders.forEach((value, index) => {
+                if (fontSizeSliders[index]) {
+                    fontSizeSliders[index].value = value;
+                    const fontSizeValueSpans = document.querySelectorAll('.font-size-slider-container span');
+                    if (fontSizeValueSpans[index]) {
+                        fontSizeValueSpans[index].textContent = value;
+                    }
+                }
+            });
+
+            const textBoxes = document.querySelectorAll('.text-box');
+            data.textBoxes.forEach((text, index) => {
+                if (textBoxes[index]) {
+                    textBoxes[index].value = text;
+                }
+            });
+
+            titleTextBox.value = data.title || '';
+            subtitleTextBox.value = data.subtitle || '';
+            updateTitle();
+            updateSubtitle();
+
+            titleContainer.style.fontSize = `${data.titleFontSizeSlider}px`;
+            subtitleContainer.style.fontSize = `${data.subtitleFontSizeSlider}px`;
+
+            updateLyricsBlocks();
+        };
+
+        reader.readAsText(file);
+    }
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.style.display = 'none';
+    fileInput.addEventListener('change', loadData);
+    document.body.appendChild(fileInput);
+
+    updateTextBoxes(parseInt(columnSlider.value));
+
+
+    const printButton = document.getElementById('printButton');
+
+    printButton.addEventListener('click', openPrintableView);
+
+    function openPrintableView() {
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert('Popup blocked! Please allow popups for this site.');
+            return;
+        }
+
+        // Generate the HTML content for the printable view
+        const printableContent = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Printable View</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    }
+                    .title-container, .subtitle-container {
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+                    .title-container {
+                        font-size: ${titleFontSizeSlider.value}px;
+                        font-weight: bold;
+                    }
+                    .subtitle-container {
+                        font-size: ${subtitleFontSizeSlider.value}px;
+                        font-style: italic;
+                    }
+                    .lyrics-row {
+                        display: flex;
+                        margin-bottom: ${rowSpacingSlider.value}px;
+                    }
+                    .lyrics-block {
+                        padding: 0px 10px; /* Reduce vertical padding */
+                        /* border: 1px solid #ccc; */
+                        box-sizing: border-box;
+                        word-break: break-all;
+                        display: flex;
+                        align-items: flex-end;
+                        min-height: 50px;
+                        white-space: nowrap; /* Prevent text from wrapping */
+                        overflow: hidden; /* Hide any overflow text */
+                        text-overflow: ellipsis; /* Add ellipsis for overflow text */
+                    }
+                    .lyrics-block {
+                        padding: 0px 10px; /* Reduce vertical padding */
+                        /* border: 1px solid #ccc; */
+                        box-sizing: border-box;
+                        word-break: break-all;
+                        display: flex;
+                        align-items: flex-end;
+                        min-height: 30px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        margin-bottom: 0; /* Remove bottom margin */
+                    }
+
+                    .lyrics-row {
+                        display: flex;
+                        margin-bottom: 0; /* Ensure row spacing is minimized */
+                    }
+                </style>
+            </head>
+            <body>
+                ${lyricsContainer.innerHTML}
+            </body>
+            </html>
+        `;
+
+        // Write the content to the new window
+        printWindow.document.open();
+        printWindow.document.write(printableContent);
+        printWindow.document.close();
+
+        // Optional: Automatically trigger print dialog
+        printWindow.onload = function() {
+        };
+    }
+
+});

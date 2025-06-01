@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleRuby</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SimpleRuby</h1>
+        <div class="slider-container">
+            <label for="columnSlider">Number of Columns:</label>
+            <input type="range" id="columnSlider" min="1" max="10" value="3">
+            <span id="columnValue">3</span>
+        </div>
+        <div class="slider-container">
+            <label for="rowSpacingSlider">Row Spacing:</label>
+            <input type="range" id="rowSpacingSlider" min="0" max="50" value="10">
+            <span id="rowSpacingValue">10</span>
+        </div>
+        <div class="slider-container">
+            <label for="titleFontSizeSlider">Title Font Size:</label>
+            <input type="range" id="titleFontSizeSlider" min="12" max="48" value="28">
+            <span id="titleFontSizeValue">28</span>
+        </div>
+        <div class="slider-container">
+            <label for="subtitleFontSizeSlider">Subtitle Font Size:</label>
+            <input type="range" id="subtitleFontSizeSlider" min="10" max="36" value="20">
+            <span id="subtitleFontSizeValue">20</span>
+        </div>
+        <div id="fontSizeSlidersContainer" class="font-size-sliders-container"></div>
+        <div class="title-subtitle-container">
+            <textarea id="titleTextBox" class="title-text-box" placeholder="Enter title here"></textarea>
+            <textarea id="subtitleTextBox" class="subtitle-text-box" placeholder="Enter subtitle here"></textarea>
+        </div>
+        <div id="textBoxesContainer" class="text-boxes-container"></div>
+        <div class="button-container">
+            <button id="saveButton">Save Settings and Text</button>
+            <button id="loadButton">Load Settings and Text</button>
+            <button id="printButton">Open Printable View</button>
+        </div>
+        <div id="lyricsContainer" class="lyrics-container">
+            <div id="titleContainer" class="title-container"></div>
+            <div id="subtitleContainer" class="subtitle-container"></div>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>

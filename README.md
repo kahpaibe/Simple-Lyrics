@@ -5,7 +5,12 @@ An example usage would be for displaying Japanese lyrics (with furigana) alongsi
 
 ## Usage
 
-Simply open main.html in any web browser.
+Simply open index.html in any web browser.
+
+## Version history
+
+* 22.02.2024 - 1.0: Initial proof of concept
+* 01.06.2025 - 2.0: Improved layout allowing better alignment and more flexibility
 
 ## License
 
